@@ -20,7 +20,7 @@ void *thread_function(void *arg) {
     while (1) {
         int ret = poll(&fds, 1, -1); // Timeout is -1, wait indefinitely
         if (ret > 0) {
-            if (fds.revents & POLLIN) { // Check if the fd is ready for reading
+            if (fds.revents & POLLIN) { // Check if the fd is  ready for reading
                 task->handler(fds.fd);
             }
         } else {
