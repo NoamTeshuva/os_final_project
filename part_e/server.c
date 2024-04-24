@@ -14,6 +14,7 @@
 // Shared variables for prime number tracking
 int largest_prime = 2;
 int largest_prime_index = 1;
+
 pthread_mutex_t lock;
 
 // Event handler function
