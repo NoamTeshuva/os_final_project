@@ -8,14 +8,19 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#define PORT 8080
+#define PORT 1124
 #define PRIME_TEST_ITERATIONS 5  // Adjust based on desired accuracy vs performance trade-off
+#define DIVIDE_BY 3
+
 
 // Shared variables for prime number tracking
-int largest_prime = 2;
-int largest_prime_index = 1;
+int largest_prime = -1;
+int largest_prime_index = -1;
+int counter = 0;//Count the amount of number that the claient send until now
 
 pthread_mutex_t lock;
+pthread_cond_t cond_divide_100;
+
 
 // Event handler function
 void prime_handler(int fd) {
@@ -25,21 +30,51 @@ void prime_handler(int fd) {
         buffer[n] = '\0';
         long long number = atoll(buffer);
         if (is_prime(number, PRIME_TEST_ITERATIONS)) {
+            printf ("%lld is prime\n", number);
             pthread_mutex_lock(&lock);
             if (number > largest_prime) {
                 largest_prime = number;
-                largest_prime_index++; // Logic for tracking the index needs refinement
+                largest_prime_index = counter; // Logic for tracking the index needs refinement
+            }
+            if (counter % DIVIDE_BY == 0) {
+                pthread_cond_signal(&cond_divide_100); // Signal the condition variable if index is divisible by 100
             }
             pthread_mutex_unlock(&lock);
         }
-        sprintf(buffer, "Largest Prime: %d, Index: %d", largest_prime, largest_prime_index);
-        send(fd, buffer, strlen(buffer), 0);
+        counter++;
+        sprintf(buffer, "__Largest Prime: %d,__\n __Index: %d__\n ", largest_prime, largest_prime_index);
+        send(fd, buffer, strlen(buffer), 0); // Send response to the client
     }
     close(fd);
 }
 
+
+void* print_largest_prime(void* arg) {
+    while (1) {
+        pthread_mutex_lock(&lock);
+        while (counter % DIVIDE_BY != 0) {
+            pthread_cond_wait(&cond_divide_100, &lock);
+        }
+        if (largest_prime > 1){
+        printf("Largest Prime Until Now Is: %d\n", largest_prime);
+        }
+        pthread_mutex_unlock(&lock);
+    }
+    return NULL;
+}
+
+
 int main() {
     pthread_mutex_init(&lock, NULL);
+    pthread_cond_init(&cond_divide_100, NULL);
+
+      // Create a thread for printing the largest prime number
+    pthread_t print_thread;
+    if (pthread_create(&print_thread, NULL, &print_largest_prime, NULL) != 0) {
+        perror("pthread_create");
+        exit(EXIT_FAILURE);
+    }
+
 
     int server_fd, new_socket;
     struct sockaddr_in address;
@@ -47,6 +82,13 @@ int main() {
 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set socket option to allow address reuse
+    int opt=1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        perror("setsockopt");
         exit(EXIT_FAILURE);
     }
 
@@ -58,6 +100,7 @@ int main() {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
+
 
     if (listen(server_fd, 10) < 0) {
         perror("listen failed");
@@ -80,6 +123,7 @@ int main() {
     }
 
     pthread_mutex_destroy(&lock);
+    pthread_cond_destroy(&cond_divide_100);
     close(server_fd);
     return 0;
 }

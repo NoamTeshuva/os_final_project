@@ -2,6 +2,11 @@
     "files.associations": {
         "inet.h": "c",
         "string.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "proactor.h": "c",
+        "socket.h": "c",
+        "in.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c"
     }
 }
