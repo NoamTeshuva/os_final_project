@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "../Miller-Rabin.h" 
 
+#define PORT 1111
 int main() {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
@@ -15,7 +16,7 @@ int main() {
 
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(9001);
+    serverAddr.sin_port = htons(PORT);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 
     if (bind(server_fd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
@@ -30,7 +31,7 @@ int main() {
         return 1;
     }
 
-    printf("Server listening on port 9001...\n");
+    printf("Server listening on port %d...\n",PORT);
 
     while (1) {
         struct sockaddr_in clientAddr;

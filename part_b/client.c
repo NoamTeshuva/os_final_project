@@ -5,6 +5,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#define PORT 1111
 
 
 /*
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Initialize random seed
-    int seed = atoi(argv[2]);
+    int seed = atoi(argv[2]);//convert to int
     srand(seed);
 
     // Create socket
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]) {
     // Define server address
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(9001);
+    serverAddr.sin_port = htons(PORT);
     serverAddr.sin_addr.s_addr = inet_addr(argv[1]);
 
     // Connect to server
