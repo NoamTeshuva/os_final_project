@@ -1,3 +1,5 @@
+// compile : gcc -o serverC.exe server.c ../Miller-Rabin.c
+// run: ./serverC.exe
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

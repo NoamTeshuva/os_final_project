@@ -11,15 +11,15 @@
 long long mulmod(long long a, long long b, long long mod) {
     // Multiplies two numbers `a` and `b` modulo `mod`.
     // Uses modular arithmetic to prevent overflow.
-    long long res = 0;
+    long long result = 0;
     a = a % mod;
     while (b > 0) {
         if (b % 2 == 1)
-            res = (res + a) % mod;
+            result = (result + a) % mod;
         a = (a * 2) % mod;
         b /= 2;
     }
-    return res % mod;
+    return result % mod;
 }
 
 long long modulo(long long base, long long exponent, long long mod) {
