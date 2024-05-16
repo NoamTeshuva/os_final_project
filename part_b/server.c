@@ -11,7 +11,6 @@
 
 #define MAX_PRIMES 100
 #define PORT 1834
-#define IP "127.0.28.10"
 
 int main() {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);

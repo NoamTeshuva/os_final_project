@@ -8,12 +8,13 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#define PORT 8080
+#define PORT 8090
 #define PRIME_TEST_ITERATIONS 5  // Adjust based on desired accuracy vs performance trade-off
 
 // Shared variables for prime number tracking
-int largest_prime = 2;
-int largest_prime_index = 1;
+long long int largest_prime = -1;
+int largest_prime_index = -1;
+int current_index = 0;
 
 pthread_mutex_t lock;
 
@@ -23,17 +24,22 @@ void prime_handler(int fd) {
     int n = read(fd, buffer, 1024);
     if (n > 0) {
         buffer[n] = '\0';
-        long long number = atoll(buffer);
+        long long int number = atoll(buffer);
+        pthread_mutex_lock(&lock);
+        printf("I receives %lld, checking if it is prime.\n",number);
         if (is_prime(number, PRIME_TEST_ITERATIONS)) {
-            pthread_mutex_lock(&lock);
             if (number > largest_prime) {
                 largest_prime = number;
-                largest_prime_index++; // Logic for tracking the index needs refinement
+                largest_prime_index = current_index; // Logic for tracking the index needs refinement
+                sprintf(buffer, "%lld Is prime. \nThe largest prime so far is: %lld, In index: %d", number ,largest_prime, largest_prime_index);
             }
-            pthread_mutex_unlock(&lock);
         }
-        sprintf(buffer, "Largest Prime: %d, Index: %d", largest_prime, largest_prime_index);
+        else{
+            sprintf(buffer,"%lld Isnt prime",number);
+        }
         send(fd, buffer, strlen(buffer), 0);
+        current_index++;
+        pthread_mutex_unlock(&lock);
     }
     close(fd);
 }
@@ -63,6 +69,8 @@ int main() {
         perror("listen failed");
         exit(EXIT_FAILURE);
     }
+
+    printf("Server listening on port %d...\n",PORT);
 
     while (1) {
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
