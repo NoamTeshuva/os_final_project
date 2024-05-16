@@ -31,7 +31,10 @@ void prime_handler(int fd) {
             if (number > largest_prime) {
                 largest_prime = number;
                 largest_prime_index = current_index; // Logic for tracking the index needs refinement
-                sprintf(buffer, "%lld Is prime. \nThe largest prime so far is: %lld, In index: %d", number ,largest_prime, largest_prime_index);
+                
+                sprintf(buffer, "%lld Is prime.\n\
+                The largest prime so far is: %lld, In index: %d",\
+                number ,largest_prime, largest_prime_index);
             }
         }
         else{
