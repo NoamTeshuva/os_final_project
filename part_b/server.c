@@ -1,12 +1,18 @@
+//Compile:gcc -o server server.c ../Miller-Rabin.c
+//Run: ./server
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
-#include "../Miller-Rabin.h" 
+#include <time.h>
+#include "../Miller-Rabin.h"
 
-#define PORT 1111
+#define MAX_PRIMES 100
+#define PORT 1834
+#define IP "127.0.28.10"
+
 int main() {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
@@ -33,6 +39,9 @@ int main() {
 
     printf("Server listening on port %d...\n",PORT);
 
+    long long primes[MAX_PRIMES];
+    int num_primes = 0;
+
     while (1) {
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);
@@ -49,6 +58,17 @@ int main() {
         // Using Miller-Rabin primality test
         bool prime = is_prime(num, 5); // Using the Miller-Rabin test with 5 iterations for accuracy
         snprintf(buffer, sizeof(buffer), "%lld is %sprime.", num, prime ? "" : "not ");
+        
+        if (prime && num_primes < MAX_PRIMES) {
+            primes[num_primes++] = num;
+        }
+
+        // Sending all primes collected so far
+        snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "\nPrimes collected: ");
+        for (int i = 0; i < num_primes; ++i) {
+            snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "%lld ", primes[i]);
+        }
+
         send(client_fd, buffer, strlen(buffer), 0);
 
         close(client_fd);
@@ -57,3 +77,4 @@ int main() {
     close(server_fd);
     return 0;
 }
+

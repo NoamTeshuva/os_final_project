@@ -1,33 +1,22 @@
-// Simplified client.c for demonstration
+//Compile: gcc -o client client.c
+//Run: ./client
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <time.h> // Include for time function
 
-#define PORT 1111
-
-
-/*
- * Client program that generates and sends random numbers to a server to check for primality.
- * Usage: ./client <server_ip> <seed>
- * The client uses the seed to generate a series of random numbers, sends them to the server, and prints the server's response.
- * Compile with: gcc client.c -o client
- */
+#define PORT 1834
+#define IP "127.0.28.1"
 
 
-
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <server_ip> <seed>\n", argv[0]);
-        return 1;
-    }
-
-    // Initialize random seed
-    int seed = atoi(argv[2]);//convert to int
-    srand(seed);
-
-    // Create socket
+int main() {
+    // Use current time as seed for random generator
+    srand(time(NULL));
+    
+    // Default server IP address
+    char *server_ip = IP;
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("Socket creation failed");
@@ -38,7 +27,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(PORT);
-    serverAddr.sin_addr.s_addr = inet_addr(argv[1]);
+    serverAddr.sin_addr.s_addr = inet_addr(server_ip);
 
     // Connect to server
     if (connect(sock, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
@@ -50,8 +39,9 @@ int main(int argc, char *argv[]) {
     // Send and receive data
     for (int i = 0; i < 10; i++) {
         long long num = rand() % 100; // Using smaller numbers for demonstration
+        long long seed = time(NULL); // Generate a seed
         char buffer[1024];
-        snprintf(buffer, sizeof(buffer), "%lld", num);
+        snprintf(buffer, sizeof(buffer), "%lld %lld", num, seed); // Send both num and seed
         send(sock, buffer, strlen(buffer), 0);
 
         // Receive response

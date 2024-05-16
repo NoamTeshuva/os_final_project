@@ -7,6 +7,8 @@
         "socket.h": "c",
         "in.h": "c",
         "stdlib.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "unistd.h": "c",
+        "miller-rabin.h": "c"
     }
 }
