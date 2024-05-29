@@ -1,11 +1,15 @@
+# chmod +x launcher.sh
+# ./launcher.sh
+
+
 #!/bin/bash
 
 # Number of client instances to start
-NUM_CLIENTS=2000
+NUM_CLIENTS=300
 
 # Server IP address and port
 SERVER_IP="127.0.0.1"
-SERVER_PORT=9001
+SERVER_PORT=9999
 
 # Optional: Accept server IP and port as command-line arguments
 if [ "$1" != "" ]; then

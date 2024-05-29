@@ -10,9 +10,9 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#define PORT 1234
+#define PORT 9999
 #define PRIME_TEST_ITERATIONS 5  // Adjust based on desired accuracy vs performance trade-off
-#define DIVIDE_BY 100
+#define DIVIDE_BY 3
 
 // Shared variables for prime number tracking
 int largest_prime = -1;
@@ -55,10 +55,8 @@ void prime_handler(int fd) {
 void *print_largest_prime() {
     pthread_mutex_lock(&lock);
     while (1) {
-        while (!condition_met) {
-            pthread_cond_wait(&cond_divide_100, &lock); // Wait for the condition to be signaled
-        }
-        printf("Largest Prime Until Now Is: %d\n", largest_prime);
+        pthread_cond_wait(&cond_divide_100, &lock); // Wait for the condition to be signaled
+        printf("Largest Prime Until Now Is: %d, in index %d\n", largest_prime, largest_prime_index);
         condition_met = 0; // Reset the flag after handling the condition
     }
     pthread_mutex_unlock(&lock);

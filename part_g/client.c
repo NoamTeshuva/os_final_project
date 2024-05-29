@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 
 #define SERVER_IP "127.0.0.1"  // Server IP address
-#define SERVER_PORT 1234
+#define SERVER_PORT 9999
 
 int main() {
     int sock;

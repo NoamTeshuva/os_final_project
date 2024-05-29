@@ -8,6 +8,18 @@
 // It works by performing a series of modular exponentiations 
 // and tests based on Fermat's Little Theorem.
 
+/*
+Purpose: 
+This function multiplies two numbers a and b under a given modulus mod. 
+It helps to avoid overflow issues by using modular arithmetic.
+
+How it works: 
+It uses a loop to perform the multiplication, 
+adding a to the result only when b is odd, 
+and doubling a and halving b each iteration.
+ This approach ensures that the intermediate results do not overflow. 
+ */
+
 long long mulmod(long long a, long long b, long long mod) {
     // Multiplies two numbers `a` and `b` modulo `mod`.
     // Uses modular arithmetic to prevent overflow.
@@ -45,10 +57,11 @@ bool is_prime(long long n, int iteration) {
         return false;
     long long s = n - 1;
     while (s % 2 == 0) {
-        s /= 2;
+        s /= 2; //find m for n-1 = (2^k) * m
     }
     for (int i = 0; i < iteration; i++) {
-        long long a = rand() % (n - 1) + 1, temp = s;
+        long long a = rand() % (n - 1) + 1; // choose a
+        long long temp = s;
         long long mod = modulo(a, temp, n);
         while (temp != n - 1 && mod != 1 && mod != n - 1) {
             mod = mulmod(mod, mod, n);

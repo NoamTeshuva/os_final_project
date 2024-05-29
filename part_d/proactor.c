@@ -10,6 +10,7 @@
 i know if the fd is hot by using poll()
 */
 
+
 void *thread_function(void *arg) {
     ProactorTask *task = (ProactorTask *)arg; // cast the arg* whice is
     struct pollfd fds; // is tbuild from two sorts event that determine if it pollin or pollout 
@@ -32,6 +33,14 @@ void *thread_function(void *arg) {
     return NULL;
 }
 
+/* 
+The Proactor design pattern facilitates asynchronous I/O operations by delegating
+the completion of these operations to separate handler objects. It allows an application
+to initiate an I/O operation and continue processing without waiting for the operation
+to complete. When the I/O operation finishes, the associated handler is invoked to handle
+the result. This pattern enhances efficiency and responsiveness 
+in systems requiring high concurrency.
+ */
 void execute_proactor(ProactorTask *task) {
     pthread_t thread;
     pthread_create(&thread, NULL, thread_function, (void *)task);

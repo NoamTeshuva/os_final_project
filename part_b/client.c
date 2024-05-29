@@ -36,7 +36,7 @@ int main() {
         return 1;
     }
 
-    // Send and receive data
+    // Send and receive data from the server
     for (int i = 0; i < 10; i++) {
         long long num = rand() % 100; // Using smaller numbers for demonstration
         long long seed = time(NULL); // Generate a seed

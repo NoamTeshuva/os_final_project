@@ -1,5 +1,5 @@
 // 
-// compile:gcc -o client client.c 
+// 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,8 +8,6 @@
 #include <time.h>
 
 #define MAX_BUFFER 1024
-#define PORT 9001
-#define IP "128.10.10.10"
 
 int main(int argc, char *argv[]) {
     int sockfd;
@@ -37,7 +35,7 @@ int main(int argc, char *argv[]) {
     // Initialize the server address structure
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(atoi(PORT));
+    serv_addr.sin_port = htons(atoi(argv[2]));
     if(inet_aton(argv[1], &serv_addr.sin_addr) == 0) {
         perror("inet_aton error");
         exit(1);

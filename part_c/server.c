@@ -1,5 +1,6 @@
-// compile : gcc -o serverC.exe server.c ../Miller-Rabin.c
-// run: ./serverC.exe
+// gcc -o server server.c ../Miller-Rabin.c -lm
+// ./server
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +11,7 @@
 #include "../Miller-Rabin.h"
 #define MAX_CLIENTS 5
 #define BUFFER_SIZE 1024
-#define PORT 9001
+#define PORT 9999
 
 void handle_client(int client_socket, FILE* log_file, long long* largest_prime) {
     char buffer[BUFFER_SIZE];
@@ -46,6 +47,15 @@ int main() {
     }
 
     printf("Server listening on port %d...\n", PORT);
+
+    /* 
+    The poll() function in C enables synchronous I/O multiplexing by monitoring multiple
+    file descriptors for readiness (e.g., read, write). It uses an array of pollfd 
+    structures specifying the file descriptors and events of interest. Internally, 
+    the kernel registers these events, puts the process to sleep if necessary,
+    and updates the revents field when events occur. This allows efficient handling of
+    multiple I/O operations without blocking. 
+    */
 
     struct pollfd fds[MAX_CLIENTS];
     fds[0].fd = server_socket;
